@@ -292,8 +292,36 @@
             text-align: center;
             margin-top: 60px;
             padding: 30px;
-            color: var(--gray-text);
+            color: #cbd5e1;
             border-top: 2px solid var(--primary-light);
+        }
+
+        .live-badge {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #10b981;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .live-badge .dot {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
@@ -301,7 +329,13 @@
     <!-- অ্যাডমিন প্যানেল লিংক -->
     <div class="admin-badge">
         <span>🔐</span>
-        <a href="admin.html">অ্যাডমিন প্যানেল</a>
+        <a href="admin.html" target="_blank">অ্যাডমিন প্যানেল</a>
+    </div>
+
+    <!-- লাইভ স্ট্যাটাস -->
+    <div class="live-badge">
+        <span class="dot"></span>
+        <span id="liveStatus">রিয়েল-টাইম সংযুক্ত</span>
     </div>
 
     <div class="container" id="app">
@@ -310,11 +344,6 @@
 
     <script>
         // ================ গ্লোবাল কনফিগ ================
-        const GITHUB_USERNAME = "YOUR_GITHUB_USERNAME"; // আপনার গিটহাব ইউজারনেম দিন
-        const REPO_NAME = "soldier-portal-1007898";
-        const DATA_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/data.json`;
-
-        // ================ ডাটা স্ট্রাকচার ================
         let appData = {
             profile: {
                 name: 'সেনা ১০০৭৮৯৮',
@@ -329,50 +358,90 @@
             gaalis: [
                 'হারামি ১০০৭৮৯৮! তোর বাপের নাম কী?',
                 'বেইমান ১০০৭৮৯৮, তোকে একঘরে করে দেব!',
-                '১০০৭৮৯৮ শালা কুত্তার বাচ্চা!'
+                '১০০৭৮৯৮ শালা কুত্তার বাচ্চা!',
+                'গাধা ১০০৭৮৯৮, তোর মাথা খারাপ?',
+                'নালায়েক ১০০৭৮৯৮, ভেড়ার বাচ্চা!'
             ]
         };
 
-        // ================ গিটহাব থেকে ডাটা লোড ================
-        async function loadData() {
+        let lastUpdate = Date.now();
+
+        // ================ লোকাল স্টোরেজ থেকে ডাটা লোড ================
+        function loadFromLocalStorage() {
             try {
-                const response = await fetch(DATA_URL + '?nocache=' + Date.now());
-                if (response.ok) {
-                    appData = await response.json();
+                // অ্যাডমিন প্যানেলের ডাটা লোকাল স্টোরেজ থেকে নিন
+                const adminData = localStorage.getItem('soldierAdminData');
+                if (adminData) {
+                    const newData = JSON.parse(adminData);
+                    
+                    // ডাটা পরিবর্তন হয়েছে কিনা চেক করুন
+                    if (JSON.stringify(appData) !== JSON.stringify(newData)) {
+                        appData = newData;
+                        renderUI();
+                        document.getElementById('liveStatus').innerHTML = '✓ আপডেট হয়েছে ' + new Date().toLocaleTimeString();
+                        
+                        // ফ্ল্যাশ ইফেক্ট
+                        document.body.style.backgroundColor = '#1a1f35';
+                        setTimeout(() => {
+                            document.body.style.backgroundColor = '';
+                        }, 200);
+                    }
                 }
-            } catch (error) {
-                console.log('গিটহাব থেকে লোড করা যায়নি, লোকাল ডাটা ব্যবহার করা হবে');
+            } catch (e) {
+                console.log('ডাটা লোড করতে সমস্যা:', e);
             }
-            renderUI();
         }
 
         // ================ ইউআই রেন্ডার ================
         function renderUI() {
             const app = document.getElementById('app');
             
-            // প্রোফাইল সেকশন
-            const profileImage = appData.profile.image 
-                ? `<img src="${appData.profile.image}" alt="Profile">`
-                : `<div class="no-image">${appData.profile.name.charAt(0)}</div>`;
+            // প্রোফাইল ইমেজ
+            let profileImageHTML = '';
+            if (appData.profile.image) {
+                profileImageHTML = `<img src="${appData.profile.image}" alt="Profile">`;
+            } else {
+                profileImageHTML = `<div class="no-image">${appData.profile.name.charAt(0)}</div>`;
+            }
 
             // ভিডিও সেকশন
-            const videosHTML = appData.videos.map(v => `
-                <div class="video-card">
-                    <div class="video-player">
-                        <video controls playsinline>
-                            <source src="${v.url}" type="video/mp4">
-                        </video>
+            let videosHTML = '';
+            if (appData.videos && appData.videos.length > 0) {
+                videosHTML = `
+                    <div class="section-title">
+                        <span>🎥</span> এক্সক্লুসিভ ভিডিও (${appData.videos.length})
                     </div>
-                    <div class="video-title">${v.title}</div>
-                </div>
-            `).join('');
+                    <div class="video-grid">
+                        ${appData.videos.map(v => `
+                            <div class="video-card">
+                                <div class="video-player">
+                                    <video controls playsinline>
+                                        <source src="${v.url}" type="video/mp4">
+                                    </video>
+                                </div>
+                                <div class="video-title">${v.title}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
 
             // গ্যালারি সেকশন
-            const galleryHTML = appData.gallery.map(img => `
-                <div class="gallery-item">
-                    <img src="${img}" alt="Gallery">
-                </div>
-            `).join('');
+            let galleryHTML = '';
+            if (appData.gallery && appData.gallery.length > 0) {
+                galleryHTML = `
+                    <div class="section-title">
+                        <span>🖼️</span> ফটো গ্যালারি (${appData.gallery.length})
+                    </div>
+                    <div class="gallery-grid">
+                        ${appData.gallery.map(img => `
+                            <div class="gallery-item">
+                                <img src="${img}" alt="Gallery">
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
 
             // সম্পূর্ণ HTML
             app.innerHTML = `
@@ -380,7 +449,7 @@
                 <div class="profile-card">
                     <div class="profile-header">
                         <div class="avatar-large">
-                            ${profileImage}
+                            ${profileImageHTML}
                         </div>
                         <div class="profile-info">
                             <h1>${appData.profile.name}</h1>
@@ -389,30 +458,13 @@
                     </div>
                 </div>
 
-                <!-- ভিডিও সেকশন -->
-                ${appData.videos.length > 0 ? `
-                    <div class="section-title">
-                        <span>🎥</span> এক্সক্লুসিভ ভিডিও
-                    </div>
-                    <div class="video-grid">
-                        ${videosHTML}
-                    </div>
-                ` : ''}
-
-                <!-- গ্যালারি সেকশন -->
-                ${appData.gallery.length > 0 ? `
-                    <div class="section-title">
-                        <span>🖼️</span> ফটো গ্যালারি
-                    </div>
-                    <div class="gallery-grid">
-                        ${galleryHTML}
-                    </div>
-                ` : ''}
+                ${videosHTML}
+                ${galleryHTML}
 
                 <!-- গালি সেকশন -->
                 <div class="gaali-section">
                     <div class="gaali-btn" id="gaaliBtn">${appData.profile.id}</div>
-                    <div class="gaali-output" id="gaaliOutput">বাটনে ক্লিক করুন</div>
+                    <div class="gaali-output" id="gaaliOutput">🔊 বাটনে ক্লিক করুন গালি শুনতে</div>
                 </div>
 
                 <!-- ফুটার -->
@@ -423,24 +475,35 @@
 
             // গালি বাটন ইভেন্ট
             document.getElementById('gaaliBtn').addEventListener('click', function() {
-                const randomGaali = appData.gaalis[Math.floor(Math.random() * appData.gaalis.length)];
-                document.getElementById('gaaliOutput').textContent = randomGaali;
-                
-                if (window.speechSynthesis) {
-                    window.speechSynthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(randomGaali);
-                    utterance.lang = 'bn-BD';
-                    utterance.rate = 0.9;
-                    window.speechSynthesis.speak(utterance);
+                if (appData.gaalis && appData.gaalis.length > 0) {
+                    const randomGaali = appData.gaalis[Math.floor(Math.random() * appData.gaalis.length)];
+                    document.getElementById('gaaliOutput').textContent = randomGaali;
+                    
+                    if (window.speechSynthesis) {
+                        window.speechSynthesis.cancel();
+                        const utterance = new SpeechSynthesisUtterance(randomGaali);
+                        utterance.lang = 'bn-BD';
+                        utterance.rate = 0.9;
+                        window.speechSynthesis.speak(utterance);
+                    }
+                } else {
+                    document.getElementById('gaaliOutput').textContent = 'কোন গালি নেই !';
                 }
             });
         }
 
-        // ================ রিয়েল-টাইম আপডেট (প্রতি ৩০ সেকেন্ড) ================
-        setInterval(loadData, 30000);
+        // ================ রিয়েল-টাইম আপডেট ================
+        setInterval(loadFromLocalStorage, 1000); // প্রতি ১ সেকেন্ডে চেক করুন
 
         // ================ ইনিশিয়ালাইজ ================
-        loadData();
+        loadFromLocalStorage();
+        
+        // যদি কিছু না থাকে তাহলে ডিফল্ট ডাটা ব্যবহার করুন
+        setTimeout(() => {
+            if (!appData.profile.name) {
+                renderUI();
+            }
+        }, 2000);
     </script>
 </body>
 </html>
