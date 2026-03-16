@@ -9,7 +9,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hind Siliguri', Roboto, sans-serif;
+            font-family: 'Segoe UI', 'Hind Siliguri', sans-serif;
         }
 
         :root {
@@ -21,6 +21,7 @@
             --dark-card: #1e293b;
             --success: #10b981;
             --danger: #ef4444;
+            --warning: #f59e0b;
         }
 
         body {
@@ -31,11 +32,10 @@
         }
 
         .admin-container {
-            max-width: 600px; /* মোবাইলের জন্য পারফেক্ট */
+            max-width: 600px;
             margin: 0 auto;
         }
 
-        /* হেডার */
         .admin-header {
             background: rgba(30, 41, 59, 0.95);
             backdrop-filter: blur(10px);
@@ -74,7 +74,33 @@
             gap: 8px;
         }
 
-        /* কার্ড */
+        .github-status {
+            background: #0f172a;
+            border-radius: 30px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 2px solid var(--primary-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
         .admin-card {
             background: rgba(30, 41, 59, 0.95);
             backdrop-filter: blur(10px);
@@ -96,7 +122,6 @@
             padding-bottom: 10px;
         }
 
-        /* ফর্ম */
         .input-group {
             margin-bottom: 15px;
         }
@@ -120,7 +145,6 @@
             font-size: 1rem;
         }
 
-        /* আপলোড এরিয়া */
         .upload-area {
             border: 2px dashed var(--primary-light);
             border-radius: 25px;
@@ -137,7 +161,6 @@
             margin-bottom: 5px;
         }
 
-        /* বাটন */
         .btn {
             background: var(--primary);
             color: white;
@@ -168,7 +191,6 @@
             border-color: #fca5a5;
         }
 
-        /* প্রিভিউ গ্রিড */
         .preview-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -209,7 +231,6 @@
             border: 1px solid white;
         }
 
-        /* আইটেম লিস্ট */
         .item-list {
             max-height: 200px;
             overflow-y: auto;
@@ -228,35 +249,6 @@
             font-size: 0.9rem;
         }
 
-        /* স্ট্যাটাস বার */
-        .status-bar {
-            background: #0f172a;
-            border-radius: 30px;
-            padding: 12px 15px;
-            margin-bottom: 20px;
-            border: 2px solid var(--primary-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--success);
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-            animation: blink 1.5s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        /* একশন বাটন গ্রুপ */
         .action-group {
             display: flex;
             flex-wrap: wrap;
@@ -264,26 +256,70 @@
             justify-content: center;
             margin-top: 20px;
         }
+
+        .token-section {
+            background: #1a1f35;
+            border-radius: 25px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid var(--accent);
+        }
+
+        .token-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .token-input input {
+            flex: 1;
+            padding: 12px;
+            background: #0f172a;
+            border: 2px solid var(--primary-light);
+            border-radius: 25px;
+            color: white;
+        }
+
+        .success-message {
+            background: var(--success);
+            color: white;
+            padding: 12px;
+            border-radius: 25px;
+            text-align: center;
+            margin: 10px 0;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="admin-container">
-        <!-- হেডার -->
         <div class="admin-header">
-            <h1>🔐 অ্যাডমিন</h1>
+            <h1>🔐 অ্যাডমিন প্যানেল</h1>
             <div class="public-link">
-                <a href="index.html" target="_blank">👥 পাবলিক ভিউ →</a>
+                <a href="index.html" target="_blank">👥 পাবলিক ভিউ</a>
             </div>
         </div>
 
-        <!-- স্ট্যাটাস -->
-        <div class="status-bar">
-            <div><span class="status-dot"></span> সংযুক্ত</div>
-            <div id="lastUpdate">আপডেট: এখনই</div>
-            <div id="dataSize">0 KB</div>
+        <div class="github-status">
+            <div>
+                <span class="status-dot"></span>
+                <span id="connectionText">GitHub সংযোগ পরীক্ষা করুন</span>
+            </div>
+            <div id="dataInfo">data.json</div>
         </div>
 
-        <!-- প্রোফাইল কার্ড -->
+        <!-- Token Section -->
+        <div class="token-section">
+            <h3 style="color: var(--accent); margin-bottom: 10px;">🔑 GitHub Token</h3>
+            <p style="font-size: 0.9rem; color: #94a3b8;">Token না থাকলে <a href="https://github.com/settings/tokens" target="_blank" style="color: var(--accent);">এখান থেকে</a> নিন (repo access দিন)</p>
+            <div class="token-input">
+                <input type="password" id="githubToken" placeholder="GitHub Personal Access Token">
+                <button class="btn btn-success" onclick="saveToken()">সেভ</button>
+            </div>
+            <small style="color: #94a3b8;">Token আপনার ব্রাউজারে সংরক্ষিত থাকবে</small>
+        </div>
+
+        <!-- Profile Card -->
         <div class="admin-card">
             <div class="card-title">👤 প্রোফাইল</div>
             <div class="input-group">
@@ -295,15 +331,15 @@
                 <input type="text" id="profileId" value="১০০৭৮৯৮">
             </div>
             <div class="upload-area" onclick="document.getElementById('profileFile').click()">
-                <input type="file" id="profileFile" accept="image/*" style="display: none;" onchange="uploadProfileImage(this)">
+                <input type="file" id="profileFile" accept="image/*" style="display: none;" onchange="handleProfileImage(this)">
                 <i>📸</i>
-                <p>প্রোফাইল ছবি</p>
+                <p>প্রোফাইল ছবি আপলোড করুন</p>
             </div>
-            <button class="btn btn-success" onclick="saveProfile()" style="width:100%;">💾 সেভ</button>
+            <button class="btn btn-success" onclick="saveProfile()" style="width:100%;">💾 প্রোফাইল সেভ</button>
             <div id="profilePreview" style="text-align: center; margin-top: 10px;"></div>
         </div>
 
-        <!-- ভিডিও কার্ড -->
+        <!-- Video Card -->
         <div class="admin-card">
             <div class="card-title">🎥 ভিডিও</div>
             <div class="input-group">
@@ -314,92 +350,112 @@
                 <label>ইউআরএল</label>
                 <input type="url" id="videoUrl" placeholder="https://...">
             </div>
-            <button class="btn" onclick="addVideo()" style="width:100%;">+ যোগ করুন</button>
+            <button class="btn" onclick="addVideo()" style="width:100%;">+ ভিডিও যোগ করুন</button>
             <div class="item-list" id="videoList"></div>
         </div>
 
-        <!-- গ্যালারি কার্ড -->
+        <!-- Gallery Card -->
         <div class="admin-card">
             <div class="card-title">🖼️ গ্যালারি</div>
             <div class="upload-area" onclick="document.getElementById('galleryFile').click()">
-                <input type="file" id="galleryFile" accept="image/*" multiple style="display: none;" onchange="uploadGalleryImages(this)">
+                <input type="file" id="galleryFile" accept="image/*" multiple style="display: none;" onchange="handleGalleryImages(this)">
                 <i>📁</i>
-                <p>একাধিক ছবি আপলোড</p>
+                <p>একাধিক ছবি আপলোড করুন</p>
             </div>
             <div class="preview-grid" id="galleryPreview"></div>
         </div>
 
-        <!-- গালি কার্ড -->
+        <!-- Gaali Card -->
         <div class="admin-card">
             <div class="card-title">💬 গালি</div>
             <div class="input-group">
                 <textarea id="newGaali" rows="2" placeholder="নতুন গালি লিখুন..."></textarea>
             </div>
-            <button class="btn" onclick="addGaali()" style="width:100%;">+ যোগ করুন</button>
+            <button class="btn" onclick="addGaali()" style="width:100%;">+ গালি যোগ করুন</button>
             <div class="item-list" id="gaaliList"></div>
         </div>
 
-        <!-- অ্যাকশন বাটন -->
+        <!-- Action Buttons -->
         <div class="action-group">
-            <button class="btn btn-success" onclick="saveAllData()">💾 সব সেভ</button>
+            <button class="btn btn-success" onclick="saveAllToGitHub()">⬆️ GitHub-এ আপলোড</button>
+            <button class="btn" onclick="loadFromGitHub()">⬇️ GitHub থেকে লোড</button>
             <button class="btn" onclick="exportData()">📥 ব্যাকআপ</button>
             <button class="btn" onclick="importData()">📤 রিস্টোর</button>
             <button class="btn btn-danger" onclick="resetData()">⚠️ রিসেট</button>
         </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">✅ সফলভাবে আপলোড হয়েছে!</div>
     </div>
 
     <script>
-        // ডাটা স্ট্রাকচার
+        // ================ কনফিগারেশন ================
+        const GITHUB_USERNAME = 'robiul7804';
+        const REPO_NAME = 'soldier-portal-1007898';
+        const DATA_FILE = 'data.json';
+        const BRANCH = 'main';
+        
+        const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${DATA_FILE}`;
+
+        // ================ ডাটা স্ট্রাকচার ================
         let appData = {
-            profile: { name: 'সেনা ১০০৭৮৯৮', id: '১০০৭৮৯৮', image: '' },
+            profile: {
+                name: 'সেনা ১০০৭৮৯৮',
+                id: '১০০৭৮৯৮',
+                image: ''
+            },
             videos: [
                 { title: '🔞 ভিডিও ১', url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4' },
                 { title: '💦 ভিডিও ২', url: 'https://test-videos.co.uk/vids/sintel/mp4/av1/1080/Sintel_1080_10s_2MB.mp4' }
             ],
             gallery: [],
-            gaalis: ['হারামি ১০০৭৮৯৮!', 'বেইমান ১০০৭৮৯৮!', '১০০৭৮৯৮ শালা!']
+            gaalis: [
+                'হারামি ১০০৭৮৯৮! তোর বাপের নাম কী?',
+                'বেইমান ১০০৭৮৯৮, তোকে একঘরে করে দেব!',
+                '১০০৭৮৯৮ শালা কুত্তার বাচ্চা!'
+            ]
         };
 
-        // লোড
-        function loadData() {
-            const saved = localStorage.getItem('soldierAdminData');
-            if (saved) {
-                appData = JSON.parse(saved);
+        // ================ টোকেন ম্যানেজমেন্ট ================
+        function saveToken() {
+            const token = document.getElementById('githubToken').value;
+            if (token) {
+                localStorage.setItem('github_token', token);
+                alert('✅ Token সংরক্ষিত হয়েছে');
+                document.getElementById('githubToken').value = '********';
             }
-            updateUI();
         }
 
-        // সেভ
-        function saveData() {
-            localStorage.setItem('soldierAdminData', JSON.stringify(appData));
-            updateUI();
-            updateStatus();
-            showMessage('✅ সেভ হয়েছে');
+        function getToken() {
+            return localStorage.getItem('github_token') || '';
         }
 
-        // ইউআই আপডেট
-        function updateUI() {
+        // ================ ইউআই রেন্ডার ================
+        function renderUI() {
             document.getElementById('profileName').value = appData.profile.name;
             document.getElementById('profileId').value = appData.profile.id;
 
             // ভিডিও লিস্ট
-            document.getElementById('videoList').innerHTML = appData.videos.map((v, i) => `
+            const videoList = document.getElementById('videoList');
+            videoList.innerHTML = appData.videos.map((v, i) => `
                 <div class="list-item">
                     <span>${v.title}</span>
                     <button class="btn-danger" style="padding:5px 10px;" onclick="deleteVideo(${i})">✕</button>
                 </div>
             `).join('');
 
-            // গ্যালারি
-            document.getElementById('galleryPreview').innerHTML = appData.gallery.map((img, i) => `
+            // গ্যালারি প্রিভিউ
+            const galleryPreview = document.getElementById('galleryPreview');
+            galleryPreview.innerHTML = appData.gallery.map((img, i) => `
                 <div class="preview-item">
                     <img src="${img}">
                     <div class="delete-btn" onclick="deleteGalleryImage(${i})">✕</div>
                 </div>
             `).join('');
 
-            // গালি
-            document.getElementById('gaaliList').innerHTML = appData.gaalis.map((g, i) => `
+            // গালি লিস্ট
+            const gaaliList = document.getElementById('gaaliList');
+            gaaliList.innerHTML = appData.gaalis.map((g, i) => `
                 <div class="list-item">
                     <span>${g}</span>
                     <button class="btn-danger" style="padding:5px 10px;" onclick="deleteGaali(${i})">✕</button>
@@ -412,93 +468,166 @@
             }
         }
 
-        // স্ট্যাটাস আপডেট
-        function updateStatus() {
-            const size = Math.round(JSON.stringify(appData).length / 1024 * 100) / 100;
-            document.getElementById('dataSize').textContent = size + ' KB';
-            document.getElementById('lastUpdate').textContent = 'আপডেট: ' + new Date().toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
-        }
-
-        // প্রোফাইল
+        // ================ প্রোফাইল ফাংশন ================
         function saveProfile() {
             appData.profile.name = document.getElementById('profileName').value;
             appData.profile.id = document.getElementById('profileId').value;
-            saveData();
+            renderUI();
+            showMessage('✅ প্রোফাইল সংরক্ষিত হয়েছে');
         }
 
-        function uploadProfileImage(input) {
+        function handleProfileImage(input) {
             const file = input.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = e => {
                     appData.profile.image = e.target.result;
-                    saveData();
+                    renderUI();
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        // ভিডিও
+        // ================ ভিডিও ফাংশন ================
         function addVideo() {
             const title = document.getElementById('videoTitle').value;
             const url = document.getElementById('videoUrl').value;
             if (title && url) {
                 appData.videos.push({ title, url });
-                saveData();
+                renderUI();
                 document.getElementById('videoTitle').value = '';
                 document.getElementById('videoUrl').value = '';
+                showMessage('✅ ভিডিও যোগ করা হয়েছে');
             }
         }
 
-        function deleteVideo(i) {
-            if (confirm('ডিলিট করবেন?')) {
-                appData.videos.splice(i, 1);
-                saveData();
+        function deleteVideo(index) {
+            if (confirm('ভিডিওটি ডিলিট করবেন?')) {
+                appData.videos.splice(index, 1);
+                renderUI();
             }
         }
 
-        // গ্যালারি
-        function uploadGalleryImages(input) {
+        // ================ গ্যালারি ফাংশন ================
+        function handleGalleryImages(input) {
             const files = Array.from(input.files);
+            let loaded = 0;
+            
             files.forEach(file => {
                 const reader = new FileReader();
                 reader.onload = e => {
                     appData.gallery.push(e.target.result);
-                    if (files.indexOf(file) === files.length - 1) {
-                        saveData();
+                    loaded++;
+                    if (loaded === files.length) {
+                        renderUI();
+                        showMessage(`✅ ${files.length} টি ছবি যোগ করা হয়েছে`);
                     }
                 };
                 reader.readAsDataURL(file);
             });
         }
 
-        function deleteGalleryImage(i) {
-            if (confirm('ডিলিট করবেন?')) {
-                appData.gallery.splice(i, 1);
-                saveData();
+        function deleteGalleryImage(index) {
+            if (confirm('ছবিটি ডিলিট করবেন?')) {
+                appData.gallery.splice(index, 1);
+                renderUI();
             }
         }
 
-        // গালি
+        // ================ গালি ফাংশন ================
         function addGaali() {
             const newGaali = document.getElementById('newGaali').value;
             if (newGaali) {
                 appData.gaalis.push(newGaali);
-                saveData();
+                renderUI();
                 document.getElementById('newGaali').value = '';
+                showMessage('✅ গালি যোগ করা হয়েছে');
             }
         }
 
-        function deleteGaali(i) {
-            if (confirm('ডিলিট করবেন?')) {
-                appData.gaalis.splice(i, 1);
-                saveData();
+        function deleteGaali(index) {
+            if (confirm('গালিটি ডিলিট করবেন?')) {
+                appData.gaalis.splice(index, 1);
+                renderUI();
             }
         }
 
-        // অতিরিক্ত
-        function saveAllData() { saveData(); }
-        
+        // ================ GitHub ফাংশন ================
+        async function loadFromGitHub() {
+            try {
+                document.getElementById('connectionText').innerHTML = '⏳ লোড হচ্ছে...';
+                
+                const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/${BRANCH}/${DATA_FILE}?nocache=${Date.now()}`);
+                if (!response.ok) throw new Error('ডাটা পাওয়া যায়নি');
+                
+                const data = await response.json();
+                appData = data;
+                renderUI();
+                
+                document.getElementById('connectionText').innerHTML = '✅ লোড সম্পন্ন';
+                showMessage('✅ GitHub থেকে লোড করা হয়েছে');
+            } catch (error) {
+                document.getElementById('connectionText').innerHTML = '❌ লোড ব্যর্থ';
+                alert('GitHub থেকে লোড করা যায়নি');
+            }
+        }
+
+        async function saveAllToGitHub() {
+            const token = getToken();
+            if (!token) {
+                alert('❌ আগে GitHub Token দিন');
+                return;
+            }
+
+            try {
+                document.getElementById('connectionText').innerHTML = '⏳ আপলোড হচ্ছে...';
+                
+                // SHA পাওয়ার চেষ্টা করুন
+                let sha = '';
+                const shaResponse = await fetch(API_URL, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                
+                if (shaResponse.ok) {
+                    const shaData = await shaResponse.json();
+                    sha = shaData.sha;
+                }
+
+                // ডাটা আপলোড
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify(appData, null, 2))));
+                
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `অ্যাডমিন প্যানেল থেকে আপডেট - ${new Date().toLocaleString('bn-BD')}`,
+                        content: content,
+                        sha: sha,
+                        branch: BRANCH
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('connectionText').innerHTML = '✅ আপলোড সম্পন্ন';
+                    showMessage('✅ GitHub-এ আপলোড করা হয়েছে! ইউজার প্যানেল ১০ সেকেন্ডের মধ্যে আপডেট হবে');
+                    
+                    // সফল হলে localStorage-এও সেভ করুন (অন্য ট্যাবের জন্য)
+                    localStorage.setItem('soldierAdminData', JSON.stringify(appData));
+                    
+                } else {
+                    throw new Error('আপলোড ব্যর্থ');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                document.getElementById('connectionText').innerHTML = '❌ আপলোড ব্যর্থ';
+                alert('GitHub-এ আপলোড করা যায়নি। Token এবং ইন্টারনেট চেক করুন।');
+            }
+        }
+
+        // ================ ব্যাকআপ ফাংশন ================
         function exportData() {
             const dataStr = JSON.stringify(appData, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
@@ -519,9 +648,10 @@
                 reader.onload = e => {
                     try {
                         appData = JSON.parse(e.target.result);
-                        saveData();
+                        renderUI();
+                        showMessage('✅ ব্যাকআপ রিস্টোর করা হয়েছে');
                     } catch (error) {
-                        alert('ভালো JSON ফাইল দিন');
+                        alert('❌ ভুল JSON ফাইল');
                     }
                 };
                 reader.readAsText(file);
@@ -530,51 +660,37 @@
         }
 
         function resetData() {
-            if (confirm('সব ডাটা রিসেট করবেন?')) {
+            if (confirm('সব ডাটা রিসেট করবেন? এটি অপরিবর্তনীয়!')) {
                 localStorage.removeItem('soldierAdminData');
                 location.reload();
             }
         }
 
+        // ================ হেল্পার ফাংশন ================
         function showMessage(msg) {
-            const div = document.createElement('div');
-            div.style.cssText = 'position:fixed; top:20px; right:20px; background:#10b981; color:white; padding:12px 25px; border-radius:50px; z-index:9999;';
-            div.textContent = msg;
-            document.body.appendChild(div);
-            setTimeout(() => div.remove(), 2000);
+            const msgBox = document.getElementById('successMessage');
+            msgBox.style.display = 'block';
+            msgBox.textContent = msg;
+            setTimeout(() => {
+                msgBox.style.display = 'none';
+            }, 3000);
         }
 
-        // লোড
-        loadData();
-        setInterval(updateStatus, 5000);
-        // localStorage কাজ করছে কিনা চেক করুন
-function checkLocalStorage() {
-    try {
-        localStorage.setItem('health_check', 'ok');
-        localStorage.removeItem('health_check');
-        return true;
-    } catch(e) {
-        console.log('localStorage error:', e);
-        return false;
-    }
-}
-
-// visibility change ইভেন্ট হ্যান্ডেলার
-document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-        console.log('App is visible again, refreshing data...');
-        if (typeof loadData === 'function') {
-            loadData(); // আপনার ডাটা লোড ফাংশন কল করুন
-        } else {
-            location.reload(); // না হলে পৃষ্ঠা রিলোড
+        // ================ প্রথম লোড ================
+        renderUI();
+        
+        // লোকাল স্টোরেজ থেকে ডাটা লোড
+        const saved = localStorage.getItem('soldierAdminData');
+        if (saved) {
+            appData = JSON.parse(saved);
+            renderUI();
         }
-    }
-});
 
-// প্রথম লোডে চেক করুন
-if (!checkLocalStorage()) {
-    alert('localStorage কাজ করছে না! WebView সেটিংস চেক করুন।');
-}
+        // Token দেখান
+        const savedToken = localStorage.getItem('github_token');
+        if (savedToken) {
+            document.getElementById('githubToken').placeholder = 'Token সংরক্ষিত আছে';
+        }
     </script>
 </body>
 </html>
