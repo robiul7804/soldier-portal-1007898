@@ -547,6 +547,34 @@
         // লোড
         loadData();
         setInterval(updateStatus, 5000);
+        // localStorage কাজ করছে কিনা চেক করুন
+function checkLocalStorage() {
+    try {
+        localStorage.setItem('health_check', 'ok');
+        localStorage.removeItem('health_check');
+        return true;
+    } catch(e) {
+        console.log('localStorage error:', e);
+        return false;
+    }
+}
+
+// visibility change ইভেন্ট হ্যান্ডেলার
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        console.log('App is visible again, refreshing data...');
+        if (typeof loadData === 'function') {
+            loadData(); // আপনার ডাটা লোড ফাংশন কল করুন
+        } else {
+            location.reload(); // না হলে পৃষ্ঠা রিলোড
+        }
+    }
+});
+
+// প্রথম লোডে চেক করুন
+if (!checkLocalStorage()) {
+    alert('localStorage কাজ করছে না! WebView সেটিংস চেক করুন।');
+}
     </script>
 </body>
 </html>
