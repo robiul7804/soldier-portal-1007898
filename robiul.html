@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন প্যানেল | সেনা পোর্টাল ১০০৭৮৯৮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Hind Siliguri', monospace;
+        }
+
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #5b21b6;
+            --primary-light: #a78bfa;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --dark-card: #1e293b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0f1c, #141b2b);
+            min-height: 100vh;
+            padding: 30px;
+            color: white;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* হেডার */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 25px 35px;
+            border-radius: 60px;
+            border: 3px solid var(--primary-light);
+        }
+
+        .admin-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #f59e0b, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .github-status {
+            background: #0f172a;
+            padding: 15px 30px;
+            border-radius: 60px;
+            border: 2px solid var(--success);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .github-status .connected {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* গ্রিড লেআউট */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 992px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* কার্ড স্টাইল */
+        .admin-card {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border: 3px solid var(--primary-light);
+            border-radius: 40px;
+            padding: 30px;
+            box-shadow: 0 20px 30px -15px black;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            color: var(--primary-light);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 15px;
+        }
+
+        /* ফর্ম এলিমেন্ট */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 15px 20px;
+            background: #0f172a;
+            border: 2px solid var(--primary-light);
+            border-radius: 30px;
+            color: white;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 20px var(--primary-light);
+        }
+
+        /* আপলোড এলাকা */
+        .upload-area {
+            border: 3px dashed var(--primary-light);
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.3s;
+            background: #0f172a;
+        }
+
+        .upload-area:hover {
+            background: rgba(124, 58, 237, 0.2);
+            border-color: var(--accent);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary-light);
+            margin-bottom: 15px;
+        }
+
+        /* বাটন */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid var(--primary-light);
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: scale(0.98);
+        }
+
+        .btn-success {
+            background: var(--success);
+            border-color: #6ee7b7;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            border-color: #fca5a5;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            border-color: #fcd34d;
+            color: black;
+        }
+
+        /* প্রিভিউ গ্রিড */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .preview-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid var(--primary-light);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--danger);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        /* আইটেম লিস্ট */
+        .item-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .list-item {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            border: 2px solid var(--primary-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* গিট কমান্ড আউটপুট */
+        .git-output {
+            background: #0a0f1a;
+            border-radius: 20px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            color: #4ade80;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- হেডার -->
+        <div class="admin-header">
+            <h1>🔐 অ্যাডমিন কন্ট্রোল প্যানেল v2.0</h1>
+            <div class="github-status">
+                <span class="connected">● কানেক্টেড</span>
+                <span>soldier-portal-1007898</span>
+                <a href="index.html" target="_blank" style="color: white; text-decoration: none; background: var(--primary); padding: 8px 20px; border-radius: 30px;">👥 পাবলিক ভিউ</a>
+            </div>
+        </div>
+
+        <!-- কুইক অ্যাকশন বার -->
+        <div style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
+            <button class="btn btn-success" onclick="syncWithGitHub()">🔄 গিটহাব সিঙ্ক</button>
+            <button class="btn" onclick="commitChanges()">💾 কমিট চেঞ্জেস</button>
+            <button class="btn" onclick="pushToGitHub()">⬆️ পুশ টু গিটহাব</button>
+            <button class="btn btn-warning" onclick="deployToPages()">🚀 ডিপ্লয় টু পেজেস</button>
+        </div>
+
+        <!-- গ্রিড 2 কলাম -->
+        <div class="grid-2">
+            <!-- প্রোফাইল কন্ট্রোল -->
+            <div class="admin-card">
+                <div class="card-title">
+                    <span>👤</span> প্রোফাইল কন্ট্রোল
+                </div>
+                <div class="input-group">
+                    <label>সৈনিকের নাম</label>
+                    <input type="text" id="profileName" value="সেনা ১০০৭৮৯৮">
+                </div>
+                <div class="input-group">
+                    <label>আইডি নম্বর</label>
+                    <input type="text" id="profileId" value="১০০৭৮৯৮">
+                </div>
+                <div class="upload-area" onclick="document.getElementById('profileImageInput').click()">
+                    <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="uploadProfileImage(this)">
+                    <i>📸</i>
+                    <h3>প্রোফাইল ছবি আপলোড</h3>
+                    <p style="color: #94a3b8;">ক্লিক করে ছবি সিলেক্ট করুন</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-success" onclick="saveProfile()">সেভ প্রোফাইল</button>
+                    <button class="btn" onclick="previewProfile()">প্রিভিউ</button>
+                </div>
+                <div id="profilePreview" style="margin-top: 20px; text-align: center;"></div>
+            </div>
+
+            <!-- ভিডিও ম্যানেজার -->
+            <div class="admin-card">
+                <div class="card-title">
+                    <span>🎥</span> ভিডিও ম্যানেজার
+                </div>
+                <div class="input-group">
+                    <label>ভিডিও টাইটেল</label>
+                    <input type="text" id="videoTitle" placeholder="ভিডিওর নাম">
+                </div>
+                <div class="input-group">
+                    <label>ভিডিও ইউআরএল</label>
+                    <input type="url" id="videoUrl" placeholder="https://example.com/video.mp4">
+                </div>
+                <button class="btn" onclick="addVideo()" style="width: 100%;">+ ভিডিও যোগ করুন</button>
+                <div class="item-list" id="videoList"></div>
+            </div>
+        </div>
+
+        <!-- গ্রিড 3 কলাম -->
+        <div class="grid-3">
+            <!-- গ্যালারি ম্যানেজার -->
+            <div class="admin-card">
+                <div class="card-title">
+                    <span>🖼️</span> গ্যালারি
+                </div>
+                <div class="upload-area" onclick="document.getElementById('galleryInput').click()">
+                    <input type="file" id="galleryInput" accept="image/*" multiple style="display: none;" onchange="uploadGalleryImages(this)">
+                    <i>📁</i>
+                    <h3>একাধিক ছবি আপলোড</h3>
+                    <p style="color: #94a3b8;">CTRL+ক্লিক করে একাধিক সিলেক্ট করুন</p>
+                </div>
+                <div class="preview-grid" id="galleryPreview"></div>
+            </div>
+
+            <!-- গালি ম্যানেজার -->
+            <div class="admin-card">
+                <div class="card-title">
+                    <span>💬</span> গালি ম্যানেজার
+                </div>
+                <div class="input-group">
+                    <label>নতুন গালি</label>
+                    <textarea id="newGaali" rows="3" placeholder="এখানে গালি লিখুন..."></textarea>
+                </div>
+                <button class="btn" onclick="addGaali()" style="width: 100%;">+ গালি যোগ করুন</button>
+                <div class="item-list" id="gaaliList"></div>
+            </div>
+
+            <!-- সেটিংস -->
+            <div class="admin-card">
+                <div class="card-title">
+                    <span>⚙️</span> সেটিংস
+                </div>
+                <div class="input-group">
+                    <label>গিটহাব ইউজারনেম</label>
+                    <input type="text" id="githubUsername" placeholder="your-username">
+                </div>
+                <div class="input-group">
+                    <label>রিপোজিটরি নাম</label>
+                    <input type="text" id="repoName" value="soldier-portal-1007898">
+                </div>
+                <div class="input-group">
+                    <label>অটো-সিঙ্ক ইন্টারভাল (সেকেন্ড)</label>
+                    <input type="number" id="syncInterval" value="30">
+                </div>
+                <button class="btn btn-success" onclick="saveSettings()">সেভ সেটিংস</button>
+            </div>
+        </div>
+
+        <!-- গিট কমান্ড রানার -->
+        <div class="admin-card" style="margin-top: 25px;">
+            <div class="card-title">
+                <span>⌨️</span> গিট কমান্ড রানার
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <input type="text" id="gitCommand" placeholder="git status" style="flex: 1; padding: 15px; background: #0f172a; border: 2px solid var(--primary-light); border-radius: 30px; color: white;">
+                <button class="btn" onclick="runGitCommand()">রান</button>
+                <button class="btn" onclick="clearGitOutput()">ক্লিয়ার</button>
+            </div>
+            <div class="git-output" id="gitOutput">
+                $ git status<br>> On branch main<br>> Your branch is up to date
+            </div>
+        </div>
+
+        <!-- ডাটা এক্সপোর্ট/ইম্পোর্ট -->
+        <div style="display: flex; gap: 15px; margin-top: 25px; justify-content: flex-end;">
+            <button class="btn" onclick="exportData()">📥 ডাটা এক্সপোর্ট</button>
+            <button class="btn" onclick="importData()">📤 ডাটা ইম্পোর্ট</button>
+            <button class="btn btn-danger" onclick="resetData()">⚠️ রিসেট ডাটা</button>
+        </div>
+    </div>
+
+    <script>
+        // ================ ডাটা স্ট্রাকচার ================
+        let appData = {
+            profile: {
+                name: 'সেনা ১০০৭৮৯৮',
+                id: '১০০৭৮৯৮',
+                image: ''
+            },
+            videos: [
+                { title: '🔞 XXX - গরম ভিডিও ১', url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4' },
+                { title: '💦 এক্সএক্সএক্স - ব্লকবাস্টার ২', url: 'https://test-videos.co.uk/vids/sintel/mp4/av1/1080/Sintel_1080_10s_2MB.mp4' }
+            ],
+            gallery: [],
+            gaalis: [
+                'হারামি ১০০৭৮৯৮! তোর বাপের নাম কী?',
+                'বেইমান ১০০৭৮৯৮, তোকে একঘরে করে দেব!',
+                '১০০৭৮৯৮ শালা কুত্তার বাচ্চা!'
+            ]
+        };
+
+        // ================ লোকাল স্টোরেজ লোড/সেভ ================
+        function loadData() {
+            const saved = localStorage.getItem('soldierAdminData');
+            if (saved) {
+                appData = JSON.parse(saved);
+            }
+            updateUI();
+        }
+
+        function saveData() {
+            localStorage.setItem('soldierAdminData', JSON.stringify(appData));
+            updateUI();
+        }
+
+        // ================ ইউআই আপডেট ================
+        function updateUI() {
+            // প্রোফাইল
+            document.getElementById('profileName').value = appData.profile.name;
+            document.getElementById('profileId').value = appData.profile.id;
+
+            // ভিডিও লিস্ট
+            const videoList = document.getElementById('videoList');
+            videoList.innerHTML = appData.videos.map((v, index) => `
+                <div class="list-item">
+                    <div>
+                        <strong>${v.title}</strong><br>
+                        <small style="color: #94a3b8;">${v.url.substring(0, 30)}...</small>
+                    </div>
+                    <button class="btn-danger" style="padding: 8px 15px;" onclick="deleteVideo(${index})">ডিলিট</button>
+                </div>
+            `).join('');
+
+            // গ্যালারি প্রিভিউ
+            const galleryPreview = document.getElementById('galleryPreview');
+            galleryPreview.innerHTML = appData.gallery.map((img, index) => `
+                <div class="preview-item">
+                    <img src="${img}" alt="Gallery">
+                    <div class="delete-btn" onclick="deleteGalleryImage(${index})">✕</div>
+                </div>
+            `).join('');
+
+            // গালি লিস্ট
+            const gaaliList = document.getElementById('gaaliList');
+            gaaliList.innerHTML = appData.gaalis.map((g, index) => `
+                <div class="list-item">
+                    <span>${g}</span>
+                    <button class="btn-danger" style="padding: 5px 15px;" onclick="deleteGaali(${index})">✕</button>
+                </div>
+            `).join('');
+
+            // প্রোফাইল প্রিভিউ
+            if (appData.profile.image) {
+                document.getElementById('profilePreview').innerHTML = `
+                    <img src="${appData.profile.image}" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary-light);">
+                `;
+            }
+        }
+
+        // ================ প্রোফাইল ফাংশন ================
+        function saveProfile() {
+            appData.profile.name = document.getElementById('profileName').value;
+            appData.profile.id = document.getElementById('profileId').value;
+            saveData();
+            showNotification('✅ প্রোফাইল সেভ করা হয়েছে!');
+        }
+
+        function uploadProfileImage(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    appData.profile.image = e.target.result;
+                    saveData();
+                    showNotification('📸 প্রোফাইল ছবি আপলোড করা হয়েছে!');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function previewProfile() {
+            const name = document.getElementById('profileName').value;
+            const id = document.getElementById('profileId').value;
+            alert(`নাম: ${name}\nআইডি: ${id}`);
+        }
+
+        // ================ ভিডিও ফাংশন ================
+        function addVideo() {
+            const title = document.getElementById('videoTitle').value;
+            const url = document.getElementById('videoUrl').value;
+            if (title && url) {
+                appData.videos.push({ title, url });
+                saveData();
+                document.getElementById('videoTitle').value = '';
+                document.getElementById('videoUrl').value = '';
+                showNotification('✅ ভিডিও যোগ করা হয়েছে!');
+            }
+        }
+
+        function deleteVideo(index) {
+            if (confirm('ভিডিওটি ডিলিট করবেন?')) {
+                appData.videos.splice(index, 1);
+                saveData();
+            }
+        }
+
+        // ================ গ্যালারি ফাংশন ================
+        function uploadGalleryImages(input) {
+            const files = Array.from(input.files);
+            let loaded = 0;
+            
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    appData.gallery.push(e.target.result);
+                    loaded++;
+                    if (loaded === files.length) {
+                        saveData();
+                        showNotification(`${files.length} টি ছবি আপলোড করা হয়েছে!`);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function deleteGalleryImage(index) {
+            if (confirm('ছবিটি ডিলিট করবেন?')) {
+                appData.gallery.splice(index, 1);
+                saveData();
+            }
+        }
+
+        // ================ গালি ফাংশন ================
+        function addGaali() {
+            const newGaali = document.getElementById('newGaali').value;
+            if (newGaali) {
+                appData.gaalis.push(newGaali);
+                saveData();
+                document.getElementById('newGaali').value = '';
+                showNotification('✅ গালি যোগ করা হয়েছে!');
+            }
+        }
+
+        function deleteGaali(index) {
+            if (confirm('গালিটি ডিলিট করবেন?')) {
+                appData.gaalis.splice(index, 1);
+                saveData();
+            }
+        }
+
+        // ================ গিটহাব ফাংশন ================
+        function syncWithGitHub() {
+            showNotification('🔄 গিটহাব সিঙ্ক শুরু হয়েছে...');
+            appendToGitOutput('$ git pull origin main\n> Already up to date.');
+        }
+
+        function commitChanges() {
+            const msg = prompt('কমিট মেসেজ দিন:');
+            if (msg) {
+                appendToGitOutput(`$ git commit -m "${msg}"\n> [main ${Math.random().toString(36).substring(7)}] ${msg}\n> 1 file changed, 42 insertions(+)`);
+                showNotification('✅ কমিট করা হয়েছে!');
+            }
+        }
+
+        function pushToGitHub() {
+            appendToGitOutput('$ git push origin main\n> Enumerating objects: 5, done.\n> Writing objects: 100% (3/3), 2.4 KiB | 1.2 MiB/s, done.\n> To github.com:username/soldier-portal.git\n>    a1b2c3d..e4f5g6h  main -> main');
+            showNotification('⬆️ গিটহাবে পুশ করা হয়েছে!');
+        }
+
+        function deployToPages() {
+            appendToGitOutput('$ npm run deploy\n> Deploying to GitHub Pages...\n> Published');
+            showNotification('🚀 গিটহাব পেজেসে ডিপ্লয় করা হয়েছে!');
+        }
+
+        function runGitCommand() {
+            const cmd = document.getElementById('gitCommand').value;
+            appendToGitOutput(`$ ${cmd}\n> Command executed successfully (demo mode)`);
+        }
+
+        function appendToGitOutput(text) {
+            const output = document.getElementById('gitOutput');
+            output.innerHTML += '<br>' + text;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearGitOutput() {
+            document.getElementById('gitOutput').innerHTML = '$ ready';
+        }
+
+        // ================ ডাটা ম্যানেজমেন্ট ================
+        function exportData() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `soldier-data-${Date.now()}.json`;
+            a.click();
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        appData = JSON.parse(e.target.result);
+                        saveData();
+                        showNotification('📥 ডাটা ইম্পোর্ট করা হয়েছে!');
+                    } catch (error) {
+                        alert('ভালো JSON ফাইল সিলেক্ট করুন');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function resetData() {
+            if (confirm('সব ডাটা রিসেট করবেন? এটি অপরিবর্তনীয়!')) {
+                localStorage.removeItem('soldierAdminData');
+                location.reload();
+            }
+        }
+
+        function saveSettings() {
+            const username = document.getElementById('githubUsername').value;
+            const repo = document.getElementById('repoName').value;
+            const interval = document.getElementById('syncInterval').value;
+            localStorage.setItem('githubSettings', JSON.stringify({ username, repo, interval }));
+            showNotification('⚙️ সেটিংস সেভ করা হয়েছে!');
+        }
+
+        // ================ নোটিফিকেশন ================
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success);
+                color: white;
+                padding: 15px 30px;
+                border-radius: 50px;
+                box-shadow: 0 10px 20px black;
+                z-index: 9999;
+                animation: slideIn 0.3s;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // ================ ইনিশিয়ালাইজ ================
+        loadData();
+
+        // অটো-সেভ প্রতি ৩০ সেকেন্ড
+        setInterval(() => {
+            saveData();
+        }, 30000);
+    </script>
+</body>
+</html>
